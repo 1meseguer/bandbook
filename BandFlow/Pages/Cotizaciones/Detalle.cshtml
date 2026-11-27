@@ -1,0 +1,100 @@
+@page "{id:int}"
+@using BandFlow.Data
+@model BandFlow.Pages.Cotizaciones.DetalleModel
+@{ ViewData["Title"] = "Cotización #" + Model.Cot?.Id; }
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger">@Model.Error</div>
+    <a asp-page="Index">Volver</a>
+    return;
+}
+@{ var c = Model.Cot!; var pendiente = c.Estado == "Pendiente"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Cotización #@c.Id <span class="badge-estado estado-@c.Estado fs-6 ms-2">@c.Estado</span></h1>
+    <a class="btn btn-outline-light" asp-page="Index">Volver</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card mb-3"><div class="card-header">Datos del show</div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Banda</dt><dd class="col-sm-8">@c.Banda</dd>
+                <dt class="col-sm-4">Promotor</dt><dd class="col-sm-8">@c.Promotor</dd>
+                <dt class="col-sm-4">Inicio</dt><dd class="col-sm-8">@Fmt.Fecha(c.Inicio)</dd>
+                <dt class="col-sm-4">Fin</dt><dd class="col-sm-8">@Fmt.Fecha(c.Fin) (@c.Duracion min)</dd>
+            </dl>
+        </div></div>
+
+        <div class="card mb-3"><div class="card-header">Extras del manager</div>
+        <div class="card-body">
+            @if (!Model.Extras.Any()) { <p class="text-muted mb-0">Esta cotización no tiene extras.</p> }
+            else
+            {
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Servicio</th><th>Cant.</th><th>Precio</th><th class="text-end">Subtotal</th></tr></thead>
+                    <tbody>
+                    @foreach (var x in Model.Extras)
+                    {
+                        <tr><td>@x.Nombre</td><td>@x.Cantidad</td><td>@Fmt.Money(x.Precio)</td>
+                            <td class="text-end">@Fmt.Money(x.Cantidad * x.Precio)</td></tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            @if (pendiente)
+            {
+                <form method="post" asp-page-handler="AgregarExtra" asp-route-id="@c.Id" class="row g-2 mt-2">
+                    <div class="col-md-7">
+                        <select name="extraId" class="form-select" required>
+                            <option value="0">-- Agregar extra --</option>
+                            @foreach (var o in Model.Catalogo) { <option value="@o.Value">@o.Text</option> }
+                        </select>
+                    </div>
+                    <div class="col-md-2"><input type="number" name="cantidad" value="1" min="1" max="99" class="form-control" required /></div>
+                    <div class="col-md-3"><button class="btn btn-primary w-100">Agregar</button></div>
+                </form>
+            }
+        </div></div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card mb-3"><div class="card-header">Desglose de costos</div>
+        <div class="card-body">
+            <table class="table table-sm mb-0">
+                <tr><td>Costo base de la banda</td><td class="text-end">@Fmt.Money(c.Base)</td></tr>
+                <tr><td>Iluminación</td><td class="text-end">@Fmt.Money(c.CostoLuces)</td></tr>
+                <tr><td>Extras del manager</td><td class="text-end">@Fmt.Money(c.Extras)</td></tr>
+                <tr class="fw-bold"><td>Total al promotor</td><td class="text-end">@Fmt.Money(c.Total)</td></tr>
+                <tr><td class="text-muted">Comisión de la agencia (sobre base)</td><td class="text-end text-muted">@Fmt.Money(c.Comision)</td></tr>
+            </table>
+        </div></div>
+
+        @if (pendiente)
+        {
+            <div class="card"><div class="card-header">Decisión</div>
+            <div class="card-body">
+                <form method="post" asp-page-handler="Aprobar" asp-route-id="@c.Id" class="mb-2">
+                    <label class="form-label">Lugar del evento</label>
+                    <input name="lugar" class="form-control mb-2" maxlength="200" placeholder="Venue y dirección" required />
+                    <button class="btn btn-primary w-100">Aprobar y agendar evento</button>
+                </form>
+                <form method="post" asp-page-handler="Rechazar" asp-route-id="@c.Id"
+                      onsubmit="return confirm('¿Rechazar esta cotización?');">
+                    <button class="btn btn-outline-danger w-100">Rechazar</button>
+                </form>
+            </div></div>
+        }
+        else if (Model.Evento != null)
+        {
+            <div class="card"><div class="card-header">Evento agendado</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Lugar:</strong> @Model.Evento.Lugar</p>
+                <p class="mb-1"><strong>Estado:</strong> <span class="badge-estado estado-@Model.Evento.Estado">@Model.Evento.Estado</span></p>
+                <p class="mb-0"><strong>Google Calendar:</strong> @(Model.Evento.GoogleId ?? "pendiente de sincronizar")</p>
+            </div></div>
+        }
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BandFlow</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bf-nav">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" asp-page="/Index">
+                    <img src="~/img/logo.png" alt="BandFlow" height="40" class="me-2" onerror="this.style.display='none'" />
+                    <span class="fw-bold">BandFlow</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+                        aria-controls="menu" aria-expanded="false" aria-label="Menú">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="menu">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" asp-page="/Cotizaciones/Index">Cotizaciones</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Agenda/Index">Agenda</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Bandas/Index">Bandas</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Categorias/Index">Categorías</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Promotores/Index">Promotores</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Reportes/Index">Reportes</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container py-4">
+        <main role="main">
+            @if (TempData["Ok"] is string ok)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @ok
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @if (TempData["Error"] is string err)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @err
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bf-footer text-center py-3">
+        BandFlow &copy; 2026 · Sistema de booking y cotizaciones · UABC FIAD
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

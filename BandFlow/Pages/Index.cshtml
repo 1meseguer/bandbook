@@ -1,0 +1,41 @@
+@page
+@using BandFlow.Data
+@model BandFlow.Pages.IndexModel
+@{ ViewData["Title"] = "Inicio"; }
+
+<div class="bf-hero p-4 p-md-5 mb-4 d-flex align-items-center">
+    <img src="~/img/logo.png" alt="BandFlow" height="110" class="me-4 d-none d-md-block" onerror="this.style.display='none'" />
+    <div>
+        <h1 class="display-5 fw-bold border-0 ps-0">BandFlow</h1>
+        <p class="lead mb-3">Booking, cotizaciones y calendario para tu agencia de management musical.</p>
+        <a class="btn btn-light me-2" asp-page="/Cotizaciones/Nueva">Nueva cotización</a>
+        <a class="btn btn-outline-light" asp-page="/Agenda/Index">Ver agenda</a>
+    </div>
+</div>
+
+@if (Model.Error != null)
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="bf-stat">@Model.Bandas</div><div class="bf-stat-label">Bandas activas</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="bf-stat">@Model.Pendientes</div><div class="bf-stat-label">Cotizaciones pendientes</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="bf-stat">@Model.Eventos</div><div class="bf-stat-label">Eventos programados</div></div></div>
+        <div class="col-6 col-md-3"><div class="card p-3 text-center"><div class="bf-stat">@Fmt.Money(Model.Ingresos)</div><div class="bf-stat-label">Ingreso de la agencia</div></div></div>
+    </div>
+}
+
+<div class="row g-3">
+    <div class="col-md-4"><div class="card h-100"><div class="card-header">Catálogo</div><div class="card-body">
+        <a asp-page="/Bandas/Index" class="d-block mb-1">Bandas</a>
+        <a asp-page="/Categorias/Index" class="d-block mb-1">Categorías y tarifas</a>
+        <a asp-page="/Promotores/Index" class="d-block">Promotores</a></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-header">Operación</div><div class="card-body">
+        <a asp-page="/Cotizaciones/Index" class="d-block mb-1">Cotizaciones</a>
+        <a asp-page="/Cotizaciones/Nueva" class="d-block mb-1">Nueva cotización</a>
+        <a asp-page="/Agenda/Index" class="d-block">Agenda de eventos</a></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-header">Análisis</div><div class="card-body">
+        <a asp-page="/Reportes/Index" class="d-block">Reporte de ingresos por banda y por mes</a></div></div></div>
+</div>

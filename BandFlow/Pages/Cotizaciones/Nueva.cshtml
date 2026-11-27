@@ -1,0 +1,52 @@
+@page
+@model BandFlow.Pages.Cotizaciones.NuevaModel
+@{ ViewData["Title"] = "Nueva cotización"; }
+
+<h1 class="mb-3">Nueva cotización</h1>
+<div class="row"><div class="col-lg-7">
+<form method="post" class="card card-body">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Input.IdBanda" class="form-label">Banda</label>
+            <select asp-for="Input.IdBanda" asp-items="Model.Bandas" class="form-select">
+                <option value="0">-- Selecciona --</option>
+            </select>
+            <span asp-validation-for="Input.IdBanda" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Input.IdPromotor" class="form-label">Promotor</label>
+            <select asp-for="Input.IdPromotor" asp-items="Model.Promotores" class="form-select">
+                <option value="0">-- Selecciona --</option>
+            </select>
+            <span asp-validation-for="Input.IdPromotor" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Input.FechaInicio" class="form-label">Fecha y hora del show</label>
+            <input asp-for="Input.FechaInicio" type="datetime-local" class="form-control" />
+            <span asp-validation-for="Input.FechaInicio" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Input.Duracion" class="form-label">Duración (minutos)</label>
+            <input asp-for="Input.Duracion" type="number" min="15" max="720" class="form-control" />
+            <span asp-validation-for="Input.Duracion" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 form-check ms-2 mt-4">
+            <input asp-for="Input.IncluyeLuces" class="form-check-input" />
+            <label asp-for="Input.IncluyeLuces" class="form-check-label">Incluye iluminación</label>
+        </div>
+        <div class="col-md-5">
+            <label asp-for="Input.CostoLuces" class="form-label">Costo de iluminación (MXN)</label>
+            <input asp-for="Input.CostoLuces" type="number" step="0.01" min="0" class="form-control" />
+            <span asp-validation-for="Input.CostoLuces" class="text-danger"></span>
+        </div>
+    </div>
+    <p class="text-muted small mt-3 mb-0">
+        El costo base sale de la tarifa de la categoría de la banda y la comisión se calcula automáticamente en la base de datos.
+    </p>
+    <div class="mt-3">
+        <button class="btn btn-primary">Registrar cotización</button>
+        <a class="btn btn-link" asp-page="Index">Cancelar</a>
+    </div>
+</form>
+</div></div>

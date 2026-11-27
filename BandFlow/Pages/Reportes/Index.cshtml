@@ -1,0 +1,70 @@
+@page
+@using BandFlow.Data
+@model BandFlow.Pages.Reportes.IndexModel
+@{ ViewData["Title"] = "Reportes"; }
+
+<h1 class="mb-3">Reporte de ingresos de la agencia</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input name="Buscar" value="@Model.Buscar" class="form-control" placeholder="Buscar banda..." /></div>
+    <div class="col-md-3">
+        <select name="Genero" class="form-select">
+            <option value="">Todos los géneros</option>
+            @foreach (var g in Model.Generos)
+            {
+                <option value="@g" selected="@(Model.Genero == g)">@g</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-outline-light">Filtrar</button>
+        <a class="btn btn-link" asp-page="Index">Limpiar</a></div>
+</form>
+
+@if (Model.Error != null) { <div class="alert alert-danger">@Model.Error</div> }
+else
+{
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card"><div class="card-header">Ingresos por banda (cotizaciones aprobadas)</div>
+            <div class="card-body p-0">
+            @if (!Model.PorBanda.Any()) { <p class="p-3 mb-0 text-muted">No hay bandas con esos filtros.</p> }
+            else
+            {
+                <div class="table-responsive">
+                <table class="table table-striped mb-0 align-middle">
+                    <thead><tr><th>Banda</th><th>Género</th><th>Shows</th><th>Comisiones</th><th>Luces y extras</th><th class="text-end">Total</th></tr></thead>
+                    <tbody>
+                    @foreach (var b in Model.PorBanda)
+                    {
+                        <tr><td>@b.Banda</td><td>@b.Genero</td><td>@b.Shows</td>
+                            <td>@Fmt.Money(b.Comisiones)</td><td>@Fmt.Money(b.Servicios)</td>
+                            <td class="text-end">@Fmt.Money(b.Total)</td></tr>
+                    }
+                    </tbody>
+                    <tfoot><tr class="fw-bold"><td colspan="5" class="text-end">Total general</td>
+                        <td class="text-end">@Fmt.Money(Model.TotalGeneral)</td></tr></tfoot>
+                </table>
+                </div>
+            }
+            </div></div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card"><div class="card-header">Ingresos por mes</div>
+            <div class="card-body p-0">
+            @if (!Model.PorMes.Any()) { <p class="p-3 mb-0 text-muted">Aún no hay cotizaciones aprobadas.</p> }
+            else
+            {
+                <table class="table table-striped mb-0">
+                    <thead><tr><th>Mes</th><th>Shows</th><th class="text-end">Ingreso</th></tr></thead>
+                    <tbody>
+                    @foreach (var m in Model.PorMes)
+                    {
+                        <tr><td>@m.Mes</td><td>@m.Shows</td><td class="text-end">@Fmt.Money(m.Total)</td></tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            </div></div>
+        </div>
+    </div>
+}
