@@ -8,8 +8,8 @@ public record CategoriaVm(int Id, string Nombre, decimal Precio, long Bandas);
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Buscar { get; set; }
     public List<CategoriaVm> Lista { get; set; } = new();
@@ -28,7 +28,7 @@ public class IndexModel : PageModel
                 r => new CategoriaVm(r.GetInt32(0), r.GetString(1), r.GetDecimal(2), r.GetInt64(3)),
                 ("@q", string.IsNullOrWhiteSpace(Buscar) ? null : Buscar.Trim()));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
@@ -38,7 +38,7 @@ public class IndexModel : PageModel
             var n = await _db.ExecuteAsync("DELETE FROM Categorias WHERE id_categoria = @id", ("@id", id));
             TempData[n > 0 ? "Ok" : "Error"] = n > 0 ? "Categoría eliminada." : "La categoría ya no existe.";
         }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage();
     }
 }

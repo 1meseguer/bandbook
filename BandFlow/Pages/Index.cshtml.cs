@@ -5,9 +5,8 @@ namespace BandFlow.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
-
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
     public long Bandas { get; set; }
     public long Pendientes { get; set; }
     public long Eventos { get; set; }
@@ -25,6 +24,6 @@ public class IndexModel : PageModel
                                          x => x.GetDecimal(0));
             Ingresos = r.FirstOrDefault();
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 }

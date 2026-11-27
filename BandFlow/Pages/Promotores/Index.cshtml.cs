@@ -8,8 +8,8 @@ public record PromotorVm(int Id, string Nombre, string Telefono, string Correo, 
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Buscar { get; set; }
     public List<PromotorVm> Lista { get; set; } = new();
@@ -28,7 +28,7 @@ public class IndexModel : PageModel
                 r => new PromotorVm(r.GetInt32(0), r.GetString(1), r.GetString(2), r.GetString(3), r.GetInt64(4)),
                 ("@q", string.IsNullOrWhiteSpace(Buscar) ? null : Buscar.Trim()));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
@@ -38,7 +38,7 @@ public class IndexModel : PageModel
             var n = await _db.ExecuteAsync("DELETE FROM Promotores WHERE id_promotor = @id", ("@id", id));
             TempData[n > 0 ? "Ok" : "Error"] = n > 0 ? "Promotor eliminado." : "El promotor ya no existe.";
         }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage();
     }
 }
