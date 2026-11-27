@@ -8,8 +8,8 @@ public record BandaVm(int Id, string Nombre, string Genero, string Categoria, de
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Buscar { get; set; }
     public List<BandaVm> Lista { get; set; } = new();
@@ -31,7 +31,7 @@ public class IndexModel : PageModel
                                  r.GetDecimal(4), r.GetDecimal(5), r.GetBoolean(6)),
                 ("@q", string.IsNullOrWhiteSpace(Buscar) ? null : Buscar.Trim()));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
@@ -41,7 +41,7 @@ public class IndexModel : PageModel
             var n = await _db.ExecuteAsync("DELETE FROM Bandas WHERE id_banda = @id", ("@id", id));
             TempData[n > 0 ? "Ok" : "Error"] = n > 0 ? "Banda eliminada." : "La banda ya no existe.";
         }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage();
     }
 }

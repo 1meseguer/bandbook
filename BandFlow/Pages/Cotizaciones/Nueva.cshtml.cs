@@ -10,8 +10,8 @@ namespace BandFlow.Pages.Cotizaciones;
 
 public class NuevaModel : PageModel
 {
-    private readonly Db _db;
-    public NuevaModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public NuevaModel(BaseDatos db) => _db = db;
 
     public class InputModel
     {
@@ -52,7 +52,7 @@ public class NuevaModel : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         try { await CargarListasAsync(); }
-        catch (Exception ex) { ModelState.AddModelError(string.Empty, Db.Explain(ex)); }
+        catch (Exception ex) { ModelState.AddModelError(string.Empty, BaseDatos.Explain(ex)); }
         return Page();
     }
 
@@ -86,7 +86,7 @@ public class NuevaModel : PageModel
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, Db.Explain(ex));
+            ModelState.AddModelError(string.Empty, BaseDatos.Explain(ex));
             return Page();
         }
     }
