@@ -7,8 +7,8 @@ namespace BandFlow.Pages.Categorias;
 
 public class EditModel : PageModel
 {
-    private readonly Db _db;
-    public EditModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public EditModel(BaseDatos db) => _db = db;
 
     public class InputModel
     {
@@ -35,7 +35,7 @@ public class EditModel : PageModel
             if (c == null) return NotFound();
             Input = c;
         }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); return RedirectToPage("Index"); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); return RedirectToPage("Index"); }
         return Page();
     }
 
@@ -57,7 +57,7 @@ public class EditModel : PageModel
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, Db.Explain(ex));
+            ModelState.AddModelError(string.Empty, BaseDatos.Explain(ex));
             return Page();
         }
     }

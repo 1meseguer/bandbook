@@ -9,8 +9,8 @@ public record AgendaVm(int IdEvento, string Banda, string Promotor, DateTime Ini
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Estado { get; set; }
     public List<AgendaVm> Lista { get; set; } = new();
@@ -31,6 +31,6 @@ public class IndexModel : PageModel
                                   r.GetString(5), r.GetString(6), r.IsDBNull(7) ? null : r.GetString(7), r.GetDecimal(8)),
                 ("@e", string.IsNullOrWhiteSpace(Estado) ? null : Estado));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 }

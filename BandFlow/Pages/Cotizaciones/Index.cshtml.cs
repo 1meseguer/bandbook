@@ -8,8 +8,8 @@ public record CotizacionVm(int Id, string Banda, string Promotor, DateTime Inici
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Buscar { get; set; }
     [BindProperty(SupportsGet = true)] public string? Estado { get; set; }
@@ -40,6 +40,6 @@ public class IndexModel : PageModel
                 ("@q", string.IsNullOrWhiteSpace(Buscar) ? null : Buscar.Trim()),
                 ("@d", Desde), ("@h", Hasta));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 }

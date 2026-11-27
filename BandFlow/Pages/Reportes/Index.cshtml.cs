@@ -9,8 +9,8 @@ public record IngresoMesVm(string Mes, long Shows, decimal Total);
 
 public class IndexModel : PageModel
 {
-    private readonly Db _db;
-    public IndexModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public IndexModel(BaseDatos db) => _db = db;
 
     [BindProperty(SupportsGet = true)] public string? Buscar { get; set; }
     [BindProperty(SupportsGet = true)] public string? Genero { get; set; }
@@ -51,6 +51,6 @@ public class IndexModel : PageModel
                 ORDER BY 1",
                 r => new IngresoMesVm(r.GetString(0), r.GetInt64(1), r.GetDecimal(2)));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
     }
 }

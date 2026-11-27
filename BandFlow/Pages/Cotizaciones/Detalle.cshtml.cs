@@ -15,8 +15,8 @@ public record EventoVm(int Id, string Lugar, string Estado, string? GoogleId);
 
 public class DetalleModel : PageModel
 {
-    private readonly Db _db;
-    public DetalleModel(Db db) => _db = db;
+    private readonly BaseDatos _db;
+    public DetalleModel(BaseDatos db) => _db = db;
 
     public CotDetalleVm? Cot { get; set; }
     public List<ExtraVm> Extras { get; set; } = new();
@@ -57,7 +57,7 @@ public class DetalleModel : PageModel
                 r => new EventoVm(r.GetInt32(0), r.GetString(1), r.GetString(2), r.IsDBNull(3) ? null : r.GetString(3)),
                 ("@id", id));
         }
-        catch (Exception ex) { Error = Db.Explain(ex); }
+        catch (Exception ex) { Error = BaseDatos.Explain(ex); }
         return Page();
     }
 
@@ -76,7 +76,7 @@ public class DetalleModel : PageModel
             TempData["Ok"] = "Extra agregado y total recalculado.";
         }
         catch (InvalidOperationException ex) { TempData["Error"] = ex.Message; }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage(new { id });
     }
 
@@ -95,7 +95,7 @@ public class DetalleModel : PageModel
             TempData["Ok"] = "Cotización aprobada y evento agendado.";
         }
         catch (InvalidOperationException ex) { TempData["Error"] = ex.Message; }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage(new { id });
     }
 
@@ -109,7 +109,7 @@ public class DetalleModel : PageModel
             if (n > 0) TempData["Ok"] = "Cotización rechazada.";
             else TempData["Error"] = "Solo se pueden rechazar cotizaciones pendientes.";
         }
-        catch (Exception ex) { TempData["Error"] = Db.Explain(ex); }
+        catch (Exception ex) { TempData["Error"] = BaseDatos.Explain(ex); }
         return RedirectToPage(new { id });
     }
 }

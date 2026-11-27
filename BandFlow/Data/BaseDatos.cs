@@ -8,17 +8,16 @@ namespace BandFlow.Data;
 /// Capa de acceso a MySQL. Todas las consultas usan parámetros (evita inyección SQL).
 /// La cadena de conexión se lee de user-secrets: ConnectionStrings:BandFlow
 /// </summary>
-public class Db
+public class BaseDatos
 {
     private readonly string _cs;
 
-    public Db(IConfiguration config)
+    public BaseDatos(IConfiguration config)
     {
-        _cs = config.GetConnectionString("BandFlow")
-              ?? throw new InvalidOperationException(
-                  "Falta la cadena de conexión. Ejecuta: dotnet user-secrets set \"ConnectionStrings:BandFlow\" \"...\"");
+        _cs = config.GetConnectionString("BandFlow") ?? throw new InvalidOperationException("Falto la cadena de conexion.");
     }
 
+    // Abrir la conexion a la bd.
     public async Task<MySqlConnection> OpenAsync()
     {
         var cn = new MySqlConnection(_cs);
@@ -26,8 +25,7 @@ public class Db
         return cn;
     }
 
-    public async Task<List<T>> QueryAsync<T>(string sql, Func<MySqlDataReader, T> map,
-                                             params (string Name, object? Value)[] ps)
+    public async Task<List<T>> QueryAsync<T>(string sql, Func<MySqlDataReader, T> map, params (string Name, object? Value)[] ps)
     {
         var lista = new List<T>();
         await using var cn = await OpenAsync();
@@ -38,8 +36,7 @@ public class Db
         return lista;
     }
 
-    public async Task<T?> FirstAsync<T>(string sql, Func<MySqlDataReader, T> map,
-                                        params (string Name, object? Value)[] ps)
+    public async Task<T?> FirstAsync<T>(string sql, Func<MySqlDataReader, T> map, params (string Name, object? Value)[] ps)
     {
         var l = await QueryAsync(sql, map, ps);
         return l.Count > 0 ? l[0] : default;
@@ -60,14 +57,14 @@ public class Db
         return Convert.ToInt64(await cmd.ExecuteScalarAsync());
     }
 
-    /// <summary>Convierte un error de MySQL en un mensaje entendible para el usuario.</summary>
+    // Errores de SQL a mensajes.
     public static string Explain(Exception ex)
     {
         if (ex is MySqlException m)
         {
             return m.Number switch
             {
-                1644 => m.Message,                                   // SIGNAL de triggers y procedimientos
+                1644 => m.Message, // SIGNAL de triggers y procedimientos
                 1062 => "Ya existe un registro con ese valor (dato duplicado).",
                 1451 => "No se puede eliminar: tiene registros relacionados.",
                 1452 => "El dato relacionado seleccionado no existe.",
@@ -76,7 +73,7 @@ public class Db
                 _ => "Error de base de datos. Intenta de nuevo."
             };
         }
-        return "Ocurrió un error inesperado. Intenta de nuevo.";
+        return "Ocurrio un error . Intenta de nuevo.";
     }
 }
 
